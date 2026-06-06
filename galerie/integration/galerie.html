@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Galerie des participant·es — OpenAI Creative Lab × Paris 8." />
+  <title>OpenAI Creative Lab × Paris 8 — Galerie</title>
+  <link rel="icon" href="./assets/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="./assets/styles.css" />
+  <script type="module">
+    import 'https://esm.run/@material/web/all.js';
+    import {styles as typescaleStyles} from 'https://esm.run/@material/web/typography/md-typescale-styles.js';
+    if ('adoptedStyleSheets' in Document.prototype) {
+      document.adoptedStyleSheets.push(typescaleStyles.styleSheet);
+    }
+  </script>
+  <script type="module" src="./assets/site.js"></script>
+
+  <!-- Galerie « Générique » (build React/Vite embarqué) -->
+  <link rel="stylesheet" href="./galerie-app/galerie.css" />
+  <script type="module" src="./galerie-app/galerie.js"></script>
+  <style>
+    /* La galerie s'affiche en pleine largeur, fond sombre, sous l'en-tête. */
+    .gallery-embed { width: 100%; background: #060607; }
+    .gallery-embed #gallery-root { min-height: 100vh; }
+  </style>
+</head>
+<body data-page="galerie">
+  <a class="skip-link" href="#main" data-i18n="a11y.skip">Aller au contenu</a>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="brand" href="./index.html" aria-label="Sora API Creative Lab Paris 8">
+        <span class="brand-text">Sora API Creative Lab × Paris 8</span>
+      </a>
+      <nav class="site-nav" aria-label="Navigation principale" data-i18n-aria-label="nav.aria">
+        <a href="./index.html" data-nav="home" data-i18n="nav.home">Accueil</a>
+        <a href="./galerie.html" data-nav="galerie" data-i18n="nav.gallery">Galerie</a>
+        <a href="./about.html" data-nav="about" data-i18n="nav.about">À propos</a>
+        <a href="./credits.html" data-nav="credits" data-i18n="nav.credits">Crédits</a>
+      </nav>
+      <div class="lang-switch" aria-label="Choix de langue" data-i18n-aria-label="lang.aria">
+        <button type="button" data-lang="fr">FR</button>
+        <button type="button" data-lang="en">EN</button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <!-- Montage de la galerie React. Le composant gère lui-même le fond sombre,
+         le défilement par pas et la lightbox. Données = CSV Google Sheet (live). -->
+    <div class="gallery-embed">
+      <div id="gallery-root"></div>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="section-shell footer-inner">
+      <span>Sora API Creative Lab × Paris 8</span>
+      <span data-i18n="footer.note">Prototype bilingue</span>
+      <span id="year"></span>
+    </div>
+  </footer>
+</body>
+</html>

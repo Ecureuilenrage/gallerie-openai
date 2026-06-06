@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Galerie — Propositions de boutons d'action</title>
+
+<!-- Police Inter via Google Fonts CDN (+ JetBrains Mono pour le style "générique") -->
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+  rel="stylesheet"
+/>
+
+<style>
+  /* ============================================================
+     TOKENS GLOBAUX — décor "générique de film"
+     ============================================================ */
+  :root {
+    --bg: #060607;              /* fond très sombre demandé */
+    --ink: #ffffff;            /* texte blanc */
+    --muted: rgba(255, 255, 255, 0.55);
+    --hairline: rgba(255, 255, 255, 0.1);
+    --accent: #6ea8fe;         /* bleu doux pour les glows/pastilles */
+    --accent-warm: #f5a623;
+    --radius-card: 18px;
+    --ease: cubic-bezier(0.22, 1, 0.36, 1); /* easing "premium" type Framer */
+  }
+
+  * { box-sizing: border-box; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Léger grain/vignette pour la profondeur d'ambiance "salle de cinéma" */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(120% 80% at 50% 0%, rgba(110, 168, 254, 0.06), transparent 60%),
+      radial-gradient(100% 100% at 50% 120%, rgba(0, 0, 0, 0.6), transparent 50%);
+    z-index: 0;
+  }
+
+  .page {
+    position: relative;
+    z-index: 1;
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 48px 32px 96px;
+  }
+
+  /* ---- En-tête de la page ---- */
+  .masthead {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 48px;
+  }
+  .masthead h1 {
+    font-size: clamp(24px, 3vw, 34px);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin: 0 0 6px;
+  }
+  .masthead p {
+    margin: 0;
+    color: var(--muted);
+    font-size: 14px;
+    max-width: 540px;
+    line-height: 1.5;
+  }
+
+  /* Bouton "Rejouer l'animation" */
+  .replay-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 20px;
+    border: 1px solid var(--hairline);
+    background: rgba(255, 255, 255, 0.04);
+    color: var(--ink);
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 999px;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition: background 0.25s var(--ease), border-color 0.25s var(--ease),
+      transform 0.25s var(--ease);
+    white-space: nowrap;
+  }
+  .replay-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.28);
+    transform: translateY(-1px);
+  }
+  .replay-btn:active { transform: translateY(0); }
+  .replay-btn svg { transition: transform 0.5s var(--ease); }
+  .replay-btn:hover svg { transform: rotate(-180deg); }
+
+  /* ============================================================
+     GRILLE DES PROPOSITIONS
+     ============================================================ */
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px;
+  }
+  @media (max-width: 920px) {
+    .grid { grid-template-columns: 1fr; }
+  }
+
+  .proposal {
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius-card);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0));
+    padding: 22px 22px 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .proposal__label {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+  .proposal__num {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+  .proposal__name {
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .proposal__desc {
+    font-size: 12.5px;
+    color: var(--muted);
+    line-height: 1.45;
+    margin: -8px 0 18px;
+  }
+
+  /* ---- Scène : incrustation vidéo + colonne de boutons à droite ---- */
+  .stage {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+
+  /* Fausse incrustation vidéo 16/9 */
+  .video {
+    flex: 1 1 auto;
+    aspect-ratio: 16 / 9;
+    border-radius: 12px;
+    position: relative;
+    display: grid;
+    place-items: center;
+    overflow: hidden;
+    background:
+      radial-gradient(140% 120% at 30% 20%, #1a2330, #0c1016 60%, #070a0e);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+      0 18px 40px rgba(0, 0, 0, 0.55);
+  }
+  .video::after {
+    /* fine ligne de "scan" décorative */
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(115deg, transparent 40%, rgba(255, 255, 255, 0.05) 50%, transparent 60%);
+  }
+  .video__name {
+    position: relative;
+    z-index: 1;
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: rgba(255, 255, 255, 0.85);
+    text-shadow: 0 1px 12px rgba(0, 0, 0, 0.6);
+  }
+  .video__play {
+    position: absolute;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    display: grid;
+    place-items: center;
+    background: rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -140%);
+  }
+
+  /* Colonne d'actions — commune à toutes les propositions */
+  .actions {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    min-width: 0;
+  }
+
+  /* ============================================================
+     ANIMATION D'ENTRÉE EN DÉCALÉ (rejouable)
+     Les boutons partent décalés/transparents, puis se posent.
+     La classe .play sur .page (re)déclenche l'animation.
+     ============================================================ */
+  @keyframes btn-enter {
+    from {
+      opacity: 0;
+      transform: translateX(18px) scale(0.96);
+      filter: blur(4px);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+      filter: blur(0);
+    }
+  }
+  /* Par défaut on masque pour éviter le flash avant lancement JS */
+  .actions > .btn { opacity: 0; }
+
+  .page.play .actions > .btn {
+    animation: btn-enter 0.62s var(--ease) both;
+  }
+  /* Décalage croissant par bouton */
+  .page.play .actions > .btn:nth-child(1) { animation-delay: 0.05s; }
+  .page.play .actions > .btn:nth-child(2) { animation-delay: 0.14s; }
+  .page.play .actions > .btn:nth-child(3) { animation-delay: 0.23s; }
+  .page.play .actions > .btn:nth-child(4) { animation-delay: 0.32s; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .page.play .actions > .btn { animation: none; opacity: 1; }
+  }
+
+  /* Base commune minimale à tous les boutons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: inherit;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 0;
+    color: inherit;
+    text-align: left;
+    white-space: nowrap;
+    user-select: none;
+  }
+  .btn svg { flex: 0 0 auto; display: block; }
+  .btn .label { line-height: 1; }
+
+  /* ============================================================
+     PROPOSITION 1 — GLASSMORPHISM
+     Verre dépoli, bordure lumineuse, backdrop-blur, glow au hover.
+     ============================================================ */
+  .p1 .btn {
+    padding: 11px 16px;
+    border-radius: 14px;
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    backdrop-filter: blur(14px) saturate(140%);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.18);
+    transition: transform 0.3s var(--ease), background 0.3s var(--ease),
+      box-shadow 0.3s var(--ease), border-color 0.3s var(--ease);
+  }
+  .p1 .btn:hover {
+    transform: translateX(-3px) scale(1.02);
+    background: rgba(255, 255, 255, 0.13);
+    border-color: rgba(160, 200, 255, 0.55);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45),
+      0 0 22px rgba(110, 168, 254, 0.35),
+      inset 0 1px 0 rgba(255, 255, 255, 0.25);
+  }
+
+  /* ============================================================
+     PROPOSITION 2 — GHOST / CONTOUR QUI SE REMPLIT
+     Contour fin transparent au repos, remplissage clair au hover.
+     ============================================================ */
+  .p2 .btn {
+    position: relative;
+    padding: 11px 18px;
+    border-radius: 999px;
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: rgba(255, 255, 255, 0.85);
+    overflow: hidden;
+    transition: color 0.3s var(--ease), border-color 0.3s var(--ease),
+      transform 0.3s var(--ease);
+  }
+  .p2 .btn::before {
+    /* fond qui "monte" au hover */
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: #ffffff;
+    transform: translateY(101%);
+    transition: transform 0.35s var(--ease);
+    z-index: 0;
+  }
+  .p2 .btn > * { position: relative; z-index: 1; }
+  .p2 .btn:hover {
+    color: #0a0a0a;
+    border-color: #ffffff;
+    transform: translateX(-3px);
+  }
+  .p2 .btn:hover::before { transform: translateY(0); }
+
+  /* ============================================================
+     PROPOSITION 3 — SOMBRE TRANSLUCIDE + PASTILLE COLORÉE
+     Fond sombre, icône dans une pastille de couleur par action.
+     ============================================================ */
+  .p3 .btn {
+    padding: 9px 16px 9px 9px;
+    border-radius: 12px;
+    background: rgba(20, 22, 28, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(6px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+    transition: transform 0.28s var(--ease), background 0.28s var(--ease),
+      border-color 0.28s var(--ease);
+  }
+  .p3 .pill {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+    display: grid;
+    place-items: center;
+    color: #fff;
+    flex: 0 0 auto;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+    transition: transform 0.28s var(--ease);
+  }
+  /* Une couleur par action */
+  .p3 .btn:nth-child(1) .pill { background: linear-gradient(140deg, #5b8cff, #3b5bdb); }
+  .p3 .btn:nth-child(2) .pill { background: linear-gradient(140deg, #f5a623, #e8590c); }
+  .p3 .btn:nth-child(3) .pill { background: linear-gradient(140deg, #b16cff, #7048e8); }
+  .p3 .btn:nth-child(4) .pill { background: linear-gradient(140deg, #2fd6a6, #0ca678); }
+  .p3 .btn:hover {
+    transform: translateX(-3px);
+    background: rgba(32, 35, 44, 0.85);
+    border-color: rgba(255, 255, 255, 0.18);
+  }
+  .p3 .btn:hover .pill { transform: scale(1.08) rotate(-3deg); }
+
+  /* ============================================================
+     PROPOSITION 4 — PILULE MINIMALISTE + MICRO-PROFONDEUR + GLOW
+     Très épurée, fine profondeur, halo lumineux au survol.
+     ============================================================ */
+  .p4 .btn {
+    padding: 11px 18px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.04));
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12) inset,
+      0 4px 14px rgba(0, 0, 0, 0.4);
+    transition: transform 0.3s var(--ease), box-shadow 0.3s var(--ease);
+  }
+  .p4 .btn:hover {
+    transform: translateX(-2px) translateY(-1px);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.2) inset,
+      0 8px 22px rgba(0, 0, 0, 0.5),
+      0 0 0 1px rgba(110, 168, 254, 0.4),
+      0 0 24px rgba(110, 168, 254, 0.3);
+  }
+
+  /* ============================================================
+     PROPOSITION 5 — ÉTIQUETTE DE GÉNÉRIQUE (monospace)
+     Lettrage espacé, lignes fines, esprit "carton de film".
+     ============================================================ */
+  .p5 .actions { gap: 0; }
+  .p5 .btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11.5px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    padding: 13px 6px 13px 14px;
+    background: transparent;
+    border: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 0;
+    color: rgba(255, 255, 255, 0.7);
+    position: relative;
+    transition: color 0.3s var(--ease), padding-left 0.3s var(--ease),
+      letter-spacing 0.3s var(--ease);
+  }
+  .p5 .actions > .btn:first-child { border-top: 1px solid rgba(255, 255, 255, 0.12); }
+  .p5 .btn::before {
+    /* tiret marqueur qui s'allonge au hover */
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 0;
+    height: 1px;
+    background: var(--ink);
+    transform: translateY(-50%);
+    transition: width 0.3s var(--ease);
+  }
+  .p5 .btn:hover {
+    color: #fff;
+    padding-left: 26px;
+    letter-spacing: 0.3em;
+  }
+  .p5 .btn:hover::before { width: 16px; }
+  .p5 .btn .index {
+    font-size: 10px;
+    color: var(--accent);
+    margin-left: auto;
+    opacity: 0.7;
+  }
+
+  /* ============================================================
+     PROPOSITION 6 — RÉVÉLATION DU LIBELLÉ AU HOVER
+     Icône seule au repos, le libellé se déploie au survol.
+     ============================================================ */
+  .p6 .actions { align-items: flex-start; }
+  .p6 .btn {
+    padding: 0;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+    overflow: hidden;
+    transition: background 0.3s var(--ease), border-color 0.3s var(--ease);
+  }
+  .p6 .icon-box {
+    width: 42px;
+    height: 42px;
+    display: grid;
+    place-items: center;
+    flex: 0 0 auto;
+  }
+  .p6 .btn .label {
+    max-width: 0;
+    opacity: 0;
+    overflow: hidden;
+    padding-right: 0;
+    transition: max-width 0.4s var(--ease), opacity 0.3s var(--ease),
+      padding-right 0.4s var(--ease);
+  }
+  .p6 .btn:hover {
+    background: rgba(255, 255, 255, 0.14);
+    border-color: rgba(160, 200, 255, 0.5);
+  }
+  .p6 .btn:hover .label {
+    max-width: 140px;
+    opacity: 1;
+    padding-right: 18px;
+  }
+
+  /* Pied de page note */
+  .footnote {
+    margin-top: 40px;
+    color: var(--muted);
+    font-size: 12px;
+    text-align: center;
+    line-height: 1.6;
+  }
+</style>
+</head>
+
+<body>
+<div class="page play" id="page">
+  <!-- ======================= EN-TÊTE ======================= -->
+  <header class="masthead">
+    <div>
+      <h1>Boutons d'action — galerie vidéo</h1>
+      <p>
+        Six directions de style pour la colonne d'actions affichée à droite de
+        l'incrustation vidéo. Survolez les boutons pour les états animés, et
+        rejouez l'entrée en décalé avec le bouton ci-contre.
+      </p>
+    </div>
+    <button class="replay-btn" id="replay" type="button">
+      <!-- icône "rejouer" -->
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 12a9 9 0 1 0 3-6.7" />
+        <path d="M3 4v4h4" />
+      </svg>
+      Rejouer l'animation
+    </button>
+  </header>
+
+  <!-- ======================= GRILLE ======================= -->
+  <div class="grid">
+
+    <!-- ===== PROPOSITION 1 — GLASSMORPHISM ===== -->
+    <section class="proposal p1">
+      <div class="proposal__label">
+        <span class="proposal__num">Proposition 1</span>
+        <span class="proposal__name">Verre dépoli (Glassmorphism)</span>
+      </div>
+      <p class="proposal__desc">
+        Surfaces translucides floutées, bordure lumineuse, halo bleuté au survol.
+        Profondeur maximale, intégration douce sur fond sombre.
+      </p>
+      <div class="stage">
+        <div class="video">
+          <div class="video__play">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+          <span class="video__name">Camille Roy</span>
+        </div>
+        <div class="actions">
+          <button class="btn" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            <span class="label">Vidéo 2</span>
+          </button>
+          <button class="btn" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+            <span class="label">Document</span>
+          </button>
+          <button class="btn" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></svg>
+            <span class="label">Prompts</span>
+          </button>
+          <button class="btn" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
+            <span class="label">Lien</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== PROPOSITION 2 — GHOST ===== -->
+    <section class="proposal p2">
+      <div class="proposal__label">
+        <span class="proposal__num">Proposition 2</span>
+        <span class="proposal__name">Contour fantôme (Ghost)</span>
+      </div>
+      <p class="proposal__desc">
+        Contour fin au repos ; au survol, un fond blanc « monte » par le bas et
+        inverse le contraste. Élégant, sobre, très lisible.
+      </p>
+      <div class="stage">
+        <div class="video">
+          <div class="video__play">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+          <span class="video__name">Camille Roy</span>
+        </div>
+        <div class="actions">
+          <button class="btn" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            <span class="label">Vidéo 2</span>
+          </button>
+          <button class="btn" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+            <span class="label">Document</span>
+          </button>
+          <button class="btn" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></svg>
+            <span class="label">Prompts</span>
+          </button>
+          <button class="btn" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
+            <span class="label">Lien</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== PROPOSITION 3 — PASTILLE COLORÉE ===== -->
+    <section class="proposal p3">
+      <div class="proposal__label">
+        <span class="proposal__num">Proposition 3</span>
+        <span class="proposal__name">Sombre + pastille colorée</span>
+      </div>
+      <p class="proposal__desc">
+        Fond sombre translucide, icône logée dans une pastille de couleur propre
+        à chaque action — repérage immédiat, touche vivante.
+      </p>
+      <div class="stage">
+        <div class="video">
+          <div class="video__play">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+          <span class="video__name">Camille Roy</span>
+        </div>
+        <div class="actions">
+          <button class="btn" type="button">
+            <span class="pill"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+            <span class="label">Vidéo 2</span>
+          </button>
+          <button class="btn" type="button">
+            <span class="pill"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></span>
+            <span class="label">Document</span>
+          </button>
+          <button class="btn" type="button">
+            <span class="pill"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></svg></span>
+            <span class="label">Prompts</span>
+          </button>
+          <button class="btn" type="button">
+            <span class="pill"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg></span>
+            <span class="label">Lien</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== PROPOSITION 4 — PILULE MINIMALISTE + GLOW ===== -->
+    <section class="proposal p4">
+      <div class="proposal__label">
+        <span class="proposal__num">Proposition 4</span>
+        <span class="proposal__name">Pilule minimaliste + glow</span>
+      </div>
+      <p class="proposal__desc">
+        Pilules épurées avec micro-relief (lumière interne) et halo lumineux qui
+        apparaît au survol. Discret au repos, premium en interaction.
+      </p>
+      <div class="stage">
+        <div class="video">
+          <div class="video__play">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+          <span class="video__name">Camille Roy</span>
+        </div>
+        <div class="actions">
+          <button class="btn" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+            <span class="label">Vidéo 2</span>
+          </button>
+          <button class="btn" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>
+            <span class="label">Document</span>
+          </button>
+          <button class="btn" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></svg>
+            <span class="label">Prompts</span>
+          </button>
+          <button class="btn" type="button">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg>
+            <span class="label">Lien</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== PROPOSITION 5 — ÉTIQUETTE DE GÉNÉRIQUE ===== -->
+    <section class="proposal p5">
+      <div class="proposal__label">
+        <span class="proposal__num">Proposition 5</span>
+        <span class="proposal__name">Étiquette de générique</span>
+      </div>
+      <p class="proposal__desc">
+        Typo monospace, lettrage espacé, lignes fines façon carton de fin de
+        film. Au survol, un tiret marqueur s'allonge et le mot respire.
+      </p>
+      <div class="stage">
+        <div class="video">
+          <div class="video__play">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+          <span class="video__name">Camille Roy</span>
+        </div>
+        <div class="actions">
+          <button class="btn" type="button">
+            <span class="label">Vidéo 2</span>
+            <span class="index">01</span>
+          </button>
+          <button class="btn" type="button">
+            <span class="label">Document</span>
+            <span class="index">02</span>
+          </button>
+          <button class="btn" type="button">
+            <span class="label">Prompts</span>
+            <span class="index">03</span>
+          </button>
+          <button class="btn" type="button">
+            <span class="label">Lien</span>
+            <span class="index">04</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== PROPOSITION 6 — RÉVÉLATION DU LIBELLÉ ===== -->
+    <section class="proposal p6">
+      <div class="proposal__label">
+        <span class="proposal__num">Proposition 6</span>
+        <span class="proposal__name">Icône → libellé révélé</span>
+      </div>
+      <p class="proposal__desc">
+        Icône seule au repos (colonne compacte) ; au survol, le libellé se
+        déploie vers la droite. Maximise l'espace pour la vidéo.
+      </p>
+      <div class="stage">
+        <div class="video">
+          <div class="video__play">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>
+          </div>
+          <span class="video__name">Camille Roy</span>
+        </div>
+        <div class="actions">
+          <button class="btn" type="button" aria-label="Vidéo 2">
+            <span class="icon-box"><svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg></span>
+            <span class="label">Vidéo 2</span>
+          </button>
+          <button class="btn" type="button" aria-label="Document">
+            <span class="icon-box"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg></span>
+            <span class="label">Document</span>
+          </button>
+          <button class="btn" type="button" aria-label="Prompts">
+            <span class="icon-box"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l1.9 5.1L19 10l-5.1 1.9L12 17l-1.9-5.1L5 10l5.1-1.9z"/></svg></span>
+            <span class="label">Prompts</span>
+          </button>
+          <button class="btn" type="button" aria-label="Lien">
+            <span class="icon-box"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7"/><path d="M7 7h10v10"/></svg></span>
+            <span class="label">Lien</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <p class="footnote">
+    Toutes les propositions sont réalisables en CSS / MUI + Framer Motion pur
+    (ombres, blur, transitions, translate/scale). Aucune dépendance, aucun WebGL.
+  </p>
+</div>
+
+<script>
+  // ============================================================
+  // Rejouer l'animation d'entrée en décalé
+  // On retire la classe .play, on force un reflow, puis on la
+  // remet : cela relance proprement toutes les animations CSS.
+  // ============================================================
+  (function () {
+    var page = document.getElementById('page');
+    var replay = document.getElementById('replay');
+
+    function rejouer() {
+      page.classList.remove('play');
+      // Force le navigateur à recalculer le layout (reset des animations)
+      void page.offsetWidth;
+      page.classList.add('play');
+    }
+
+    replay.addEventListener('click', rejouer);
+  })();
+</script>
+</body>
+</html>
