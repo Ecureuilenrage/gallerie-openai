@@ -38,6 +38,26 @@ lecteur Drive** (`VideoLightbox`/`DocLightbox`) que le Générique. L'app est **
 - Le dépôt contient aussi `poc-generique/` (POC initial), `participants/` (dossiers sources des
   participants, **sans fichiers vidéo/image web**), `backlog.md`.
 
+### Intégration au site statique — `galerie-build/` (points d'attention)
+
+Le site hôte est **statique** (aucun outil de build) : on lui livre le **build compilé**
+`galerie-build/` (à la racine du dépôt). Voir `galerie-build/README.md` pour le détail.
+
+- **Quoi copier** : le **contenu** de `galerie-build/` à la racine du repo
+  `openai_creativelab_2026`, en **écrasant** `galerie.html`. Soit **deux dossiers**
+  (`galerie-app/` = code, `vignettes/` = images) **plus** `galerie.html`.
+- **Vignettes à la racine, à côté de `galerie.html`** (jamais dans `galerie-app/`) :
+  elles sont référencées en relatif `./vignettes/…` par rapport à la page hôte.
+- **Chemins relatifs partout** (`base: './'` + `import.meta.env.BASE_URL`) → marche sous
+  le sous-chemin `…github.io/openai_creativelab_2026/` (sinon les vignettes faisaient 404).
+- **Bouton « Retour »** (haut-gauche) piloté par `data-home-href="./index.html"` sur
+  `#gallery-root` ; masqué en mode autonome (montage `#root`).
+- **Partage Drive** : vidéos partagées « Tout utilisateur disposant du lien », sinon lecteurs
+  vides. Les vignettes locales s'affichent dans tous les cas.
+- **Régénérer** après une modif : `npm run build` puis recopier `dist/` dans `galerie-build/`.
+- **Repo cible non versionné ici** : ce dépôt prépare le build ; le copier-coller dans
+  `openai_creativelab_2026` reste manuel (commande PowerShell dans `galerie-build/README.md`).
+
 ---
 
 ## 2. Source de données (CSV Google Sheet)

@@ -45,6 +45,24 @@ C'est tout — aucun build n'est nécessaire côté site.
 - **Données en direct.** La galerie lit le Google Sheet publié (CSV) à chaque
   chargement : éditer la feuille met à jour la galerie sans rebuild.
 
+## Points d'attention
+
+- **Deux dossiers à copier**, pas un seul : `galerie-app/` (le code) **et**
+  `vignettes/` (les images). Les vignettes sont référencées en relatif par rapport
+  à `galerie.html` (`./vignettes/…`) : elles doivent rester **à côté de
+  `galerie.html`** (racine du site), **jamais** dans `galerie-app/`.
+- **Partage Google Drive.** Les vidéos des participants doivent être partagées
+  « **Tout utilisateur disposant du lien** », sinon les lecteurs restent vides pour
+  les visiteurs. (Les vignettes locales, elles, s'affichent dans tous les cas.)
+- **Si les vignettes manquent** (dossier `vignettes/` oublié) : la galerie ne plante
+  pas, elle retombe silencieusement sur les posters Google Drive — qualité moindre.
+- **Klein LÉON** : vignette locale `vignettes/klein-leon.png` présente. Si une
+  meilleure image est fournie dans le Google Sheet, relancer `npm run vignettes`
+  côté `../galerie/` puis régénérer ce dossier (voir ci-dessous).
+- **Repo cible non versionné ici.** Ce dépôt ne fait que **préparer** le build ; le
+  copier-coller dans `openai_creativelab_2026` reste une opération manuelle (ou via
+  la commande PowerShell ci-dessus).
+
 ## Regénérer ce dossier
 
 Après toute modification de la galerie :
