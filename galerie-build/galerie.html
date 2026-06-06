@@ -23,6 +23,57 @@
     /* La galerie s'affiche en pleine largeur, fond sombre, sous l'en-tête. */
     .gallery-embed { width: 100%; background: #060607; }
     .gallery-embed #gallery-root { min-height: 100vh; }
+
+    /* --- Fusion de l'en-tête et du pied de page dans le noir de la galerie ---
+       Sur la page Galerie uniquement (body[data-page="galerie"]) : on enlève la
+       bande crème en haut et en bas, on prend le fond sombre de la galerie, et on
+       inverse les couleurs des boutons (fond sombre, survol grisé clair, lettres
+       couleur crème). Les autres pages du site restent inchangées. */
+    body[data-page="galerie"] { background: #060607; }
+    /* Voiles décoratifs (texture/vignette crème) neutralisés sur fond noir. */
+    body[data-page="galerie"]::before,
+    body[data-page="galerie"]::after { display: none; }
+
+    /* En-tête : plus de bande, fond noir, sans filet ni flou crème. */
+    body[data-page="galerie"] .site-header {
+      background: #060607;
+      border-bottom-color: transparent;
+      backdrop-filter: none;
+    }
+    /* Pied de page : idem, fondu dans le noir. */
+    body[data-page="galerie"] .site-footer {
+      background: #060607;
+      border-top-color: transparent;
+    }
+
+    /* Marque + texte du pied : couleur crème. */
+    body[data-page="galerie"] .brand { color: #faf5ea; }
+    body[data-page="galerie"] .footer-inner { color: rgba(250, 245, 234, 0.62); }
+
+    /* Liens de navigation : lettres crème atténuées, survol/actif grisé clair. */
+    body[data-page="galerie"] .site-nav a { color: rgba(250, 245, 234, 0.72); }
+    body[data-page="galerie"] .site-nav a:hover,
+    body[data-page="galerie"] .site-nav a:focus-visible,
+    body[data-page="galerie"] .site-nav a[aria-current="page"] {
+      background: rgba(250, 245, 234, 0.12);
+      color: #faf5ea;
+    }
+
+    /* Sélecteur FR/EN : conteneur discret, boutons crème, actif inversé
+       (pastille crème, lettres sombres). */
+    body[data-page="galerie"] .lang-switch {
+      background: rgba(250, 245, 234, 0.06);
+      border-color: rgba(250, 245, 234, 0.22);
+    }
+    body[data-page="galerie"] .lang-switch button { color: rgba(250, 245, 234, 0.72); }
+    body[data-page="galerie"] .lang-switch button:hover {
+      background: rgba(250, 245, 234, 0.12);
+      color: #faf5ea;
+    }
+    body[data-page="galerie"] .lang-switch button[aria-pressed="true"] {
+      background: #faf5ea;
+      color: #1f1a14;
+    }
   </style>
 </head>
 <body data-page="galerie">
