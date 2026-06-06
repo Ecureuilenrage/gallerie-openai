@@ -111,8 +111,12 @@ export function rowToProject(row: Record<string, string>): Project | null {
   // si rien n'est disponible, on laisse un fond sombre uni (cf. ProjectTile).
   const vignetteRaw = (row.vignette ?? '').trim();
   const vignetteId = driveId(vignetteRaw);
+  // Chemin RELATIF dans le manifeste (« vignettes/x.png ») : on le préfixe par la
+  // base Vite. En dev `BASE_URL = '/'` (servi depuis public/), en build `'./'`
+  // (résolu relativement à la page hôte) → fonctionne aussi sous un sous-chemin.
+  const localVignette = VIGNETTES[id];
   const thumbnail =
-    VIGNETTES[id] ||
+    (localVignette ? import.meta.env.BASE_URL + localVignette : '') ||
     (vignetteId ? driveThumb(vignetteId) : vignetteRaw) ||
     (heroId ? driveThumb(heroId) : '');
 

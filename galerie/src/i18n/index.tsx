@@ -33,6 +33,8 @@ const STRINGS: Record<Lang, Dict> = {
     'app.loading': 'Chargement du générique…',
     'app.offline': 'Données hors-ligne',
 
+    'nav.back': 'Retour',
+
     'credits.counter': '{i} / {n} · défilez',
     'credits.reducedTitle': 'Générique · {n} participants',
     'credits.aria.roledescription': 'carrousel de participants',
@@ -86,6 +88,8 @@ const STRINGS: Record<Lang, Dict> = {
   en: {
     'app.loading': 'Loading the credits…',
     'app.offline': 'Offline data',
+
+    'nav.back': 'Back',
 
     'credits.counter': '{i} / {n} · scroll',
     'credits.reducedTitle': 'Credits · {n} participants',

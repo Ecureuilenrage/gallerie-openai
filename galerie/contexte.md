@@ -2,7 +2,8 @@
 
 > Document de reprise. À fournir en début de conversation pour éviter de ré-explorer le projet.
 > Dernière mise à jour : 2026-06-06 (3 vues : Générique + Banc de montage + Traînée d'images ;
-> sélecteur de vue ; bilingue FR/EN synchronisé au site hôte).
+> sélecteur de vue ; bilingue FR/EN synchronisé au site hôte ; **build prêt à coller
+> `galerie-build/` + bouton « Retour » + vignettes en chemins relatifs**).
 
 ---
 
@@ -27,7 +28,13 @@ lecteur Drive** (`VideoLightbox`/`DocLightbox`) que le Générique. L'app est **
   Emotion, Framer Motion 11, `@fontsource/inter`.
 - **Lancer** : `cd galerie ; npm install ; npm run dev` → http://localhost:5173
 - **Builder** : `npm run build` (= `tsc && vite build`) → `dist/` (noms stables `galerie.js`, `galerie.css`).
-- **Intégration** : la galerie est conçue pour être embarquée dans un site hôte (voir `galerie/integration/`).
+- **Intégration** : la galerie est conçue pour être embarquée dans le site statique
+  `ereyes/openai_creativelab_2026`. Un **build compilé prêt à copier-coller** est versionné à
+  la racine du dépôt dans **`galerie-build/`** (`galerie.html` + `galerie-app/` + `vignettes/`) :
+  copier son contenu à la racine du repo du site, aucun build côté site. Guide :
+  `galerie/integration/INTEGRATION.md` ; mode d'emploi : `galerie-build/README.md`. Tous les
+  chemins sont **relatifs** (`base: './'` + vignettes via `import.meta.env.BASE_URL`) → marche
+  sous le sous-chemin `…github.io/openai_creativelab_2026/`.
 - Le dépôt contient aussi `poc-generique/` (POC initial), `participants/` (dossiers sources des
   participants, **sans fichiers vidéo/image web**), `backlog.md`.
 
@@ -91,8 +98,10 @@ SNAPSHOT local (participants.ts) ──┘
   - `driveThumb(id)` = `https://drive.google.com/thumbnail?id={id}&sz=w1280` (image poster).
 - **`galerie/src/data/participants.ts`** : `SNAPSHOT` (CSV en chaîne) → `FALLBACK: Project[]`
   dérivé via `rowToProject`. C'est la **copie locale** affichée immédiatement.
-- **`galerie/src/data/vignettes.ts`** *(généré)* : manifeste `VIGNETTES` (slug → chemin local
-  `/vignettes/<slug>.<ext>`). Produit par le script ci-dessous ; **ne pas éditer à la main**.
+- **`galerie/src/data/vignettes.ts`** *(généré)* : manifeste `VIGNETTES` (slug → chemin **relatif**
+  `vignettes/<slug>.<ext>`, sans `/` initial). Préfixé par `import.meta.env.BASE_URL` dans
+  `rowToProject` (dev → `/vignettes/…` ; build → `./vignettes/…`, résolu par rapport à la page
+  hôte → OK en sous-chemin). Produit par le script ci-dessous ; **ne pas éditer à la main**.
 
 ### Vignettes : images LOCALES (et comment les rafraîchir)
 Google bloque le hotlink `<img>` vers `drive.google.com/thumbnail` (le `curl` passe, le
@@ -207,6 +216,10 @@ type ViewMode = 'credits' | 'timeline' | 'trail';
   privilégie la préférence stockée ; **pas de `sync()` au montage** (n'écrase pas la préférence).
   Notre `setLang` réécrit `lang` + `localStorage` → cohérent dans les deux sens.
 - **`components/LangToggle.tsx`** : mini-toggle FR/EN (haut-droite, `zIndex 11`) pour le mode autonome.
+- **`components/BackButton.tsx`** *(ajout)* : bouton « Retour » (haut-gauche, `zIndex 11`, miroir du
+  LangToggle, libellé i18n `nav.back`). Cible lue depuis `data-home-href` sur `#gallery-root` (ex.
+  `./index.html`, posé par le `galerie.html` du site) ; **masqué en mode autonome** (montage `#root`,
+  attribut absent). Monté dans `App.tsx` à côté de `<LangToggle />`.
 - Tous les libellés visibles sont passés par `t(...)` dans `App`, `CreditsView` (dont rail : Lien→Link),
   `VideoLightbox`, `DocLightbox`, `ProjectTile`, et les 2 vues alternatives.
 - **`motion.ts`** : était une version réduite (`springsScroll` + `dwellIndex`). Restauré en version
@@ -278,6 +291,7 @@ vraie vignette est fournie dans le Sheet (puis relancer `npm run vignettes`).
 | Lightbox partagée des vues alt (`useAltLightbox`) | `galerie/src/components/AltLightboxHost.tsx` |
 | i18n FR/EN (provider, dictionnaire, `t`) + synchro hôte | `galerie/src/i18n/index.tsx` |
 | Mini-toggle FR/EN (haut-droite) | `galerie/src/components/LangToggle.tsx` |
+| Bouton « Retour » (haut-gauche, `data-home-href`) | `galerie/src/components/BackButton.tsx` |
 | Standard de transitions (springs/tweens/helpers) | `galerie/src/motion.ts` |
 | Tuile / vignette | `galerie/src/components/ProjectTile.tsx` |
 | Lecteur vidéo + ressources | `galerie/src/components/VideoLightbox.tsx` |
@@ -292,5 +306,7 @@ vraie vignette est fournie dans le Sheet (puis relancer `npm run vignettes`).
 | Types | `galerie/src/types.ts` |
 | Entrée app | `galerie/src/App.tsx` |
 | Proposition de style boutons | `galerie/test-boutons.html` |
+| Template page hôte (à poser dans le site) | `galerie/integration/galerie.html` |
+| **Build prêt à coller** (racine du dépôt) | `galerie-build/` (+ `galerie-build/README.md`) |
 ```
 ```

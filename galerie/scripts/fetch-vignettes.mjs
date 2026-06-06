@@ -126,7 +126,9 @@ async function main() {
         if (buf.byteLength < 1024) throw new Error(`réponse trop petite (${buf.byteLength} o)`);
         const file = `${id}.${ext}`;
         await writeFile(resolve(OUT_DIR, file), buf);
-        manifest[id] = `/vignettes/${file}`;
+        // Chemin RELATIF (sans `/` initial) : consommé via `import.meta.env.BASE_URL`
+        // dans lib/csv.ts, il fonctionne aussi sous un sous-chemin (GitHub Pages projet).
+        manifest[id] = `vignettes/${file}`;
         const via = label === 'vignette' ? '' : ` (repli ${label})`;
         console.log(`  ✓ ${author} → ${file} (${(buf.byteLength / 1024).toFixed(0)} Ko)${via}`);
         ok++;
@@ -146,7 +148,7 @@ async function main() {
   const entries = Object.entries(manifest)
     .map(([k, v]) => `  ${JSON.stringify(k)}: ${JSON.stringify(v)},`)
     .join('\n');
-  const ts = `// Généré par scripts/fetch-vignettes.mjs — NE PAS éditer à la main.\n// Relancer \`npm run vignettes\` après modification de la colonne « vignette » du CSV.\n\n/** Vignettes locales (slug du participant -> chemin servi par Vite). */\nexport const VIGNETTES: Record<string, string> = {\n${entries}\n};\n`;
+  const ts = `// Généré par scripts/fetch-vignettes.mjs — NE PAS éditer à la main.\n// Relancer \`npm run vignettes\` après modification de la colonne « vignette » du CSV.\n\n/** Vignettes locales (slug du participant -> chemin RELATIF, préfixé par import.meta.env.BASE_URL dans lib/csv.ts). */\nexport const VIGNETTES: Record<string, string> = {\n${entries}\n};\n`;
   await writeFile(MANIFEST, ts, 'utf8');
 
   console.log(`\n• Terminé : ${ok} vignette(s) téléchargée(s), ${skip} ignorée(s).`);

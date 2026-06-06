@@ -64,6 +64,33 @@ npm run dev      # http://localhost:5173
 npm run build    # tsc + build de production dans dist/
 ```
 
+## Build prêt à intégrer (site statique)
+
+Le site hôte [`ereyes/openai_creativelab_2026`](https://github.com/ereyes/openai_creativelab_2026)
+est **statique** (pas d'outil de build) : on lui livre donc un **build compilé
+prêt à copier-coller**, versionné à la racine de ce dépôt dans
+[`../galerie-build/`](../galerie-build/).
+
+Ce dossier contient déjà tout le nécessaire :
+
+```
+galerie-build/
+  galerie.html      # page hôte (en-tête/pied/nav du site + montage de la galerie)
+  galerie-app/      # galerie.js, galerie.css, fonts/   (code, noms stables sans hash)
+  vignettes/        # images locales des participants     (chemins RELATIFS)
+  README.md         # mode d'emploi du copier-coller
+```
+
+**Intégration** = copier le **contenu** de `galerie-build/` à la racine du repo du
+site (en écrasant `galerie.html`). Aucun build côté site. Points clés :
+
+- **Chemins relatifs partout** (`base: './'` + vignettes via `import.meta.env.BASE_URL`)
+  → fonctionne sous le sous-chemin `…github.io/openai_creativelab_2026/`.
+- **Bouton « Retour »** (haut-gauche) vers l'accueil, piloté par
+  `data-home-href="./index.html"` sur `#gallery-root`.
+- **Régénérer** après une modif : `npm run build`, puis recopier `dist/` dans
+  `galerie-build/` (cf. [`integration/INTEGRATION.md`](./integration/INTEGRATION.md)).
+
 ## Stack
 
 React 18 + TypeScript · MUI v6 (`@mui/material`, `@mui/icons-material`, `@emotion`) ·

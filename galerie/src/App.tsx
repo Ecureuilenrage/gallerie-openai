@@ -7,6 +7,7 @@ import TimelineEditorView from './views/TimelineEditorView';
 import ImageTrailView from './views/ImageTrailView';
 import ViewSwitcher from './components/ViewSwitcher';
 import LangToggle from './components/LangToggle';
+import BackButton from './components/BackButton';
 import { useAltLightbox } from './components/AltLightboxHost';
 import { useParticipants } from './hooks/useParticipants';
 import { useI18n } from './i18n';
@@ -46,6 +47,7 @@ export default function App() {
 
       {!loading && error && <OfflineBadge />}
       {!loading && <ViewSwitcher activeView={view} onChange={setView} />}
+      <BackButton />
       <LangToggle />
       {altLightbox}
     </Box>
